@@ -13,6 +13,7 @@ type config struct {
 	Debug               bool
 	HTTPClient          *http.Client
 	ChromeOptions       map[string]interface{}
+	LogTag              string
 }
 
 // An Option specifies configuration for a new WebDriver or Page.
@@ -59,6 +60,12 @@ var RejectInvalidSSL Option = func(c *config) {
 // Debug is an Option that connects the running WebDriver to stdout and stdin.
 var Debug Option = func(c *config) {
 	c.Debug = true
+}
+
+func LogTag(logTag string) Option {
+	return func(c *config) {
+		c.LogTag = logTag
+	}
 }
 
 // HTTPClient provides an Option for specifying a *http.Client

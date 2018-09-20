@@ -41,6 +41,7 @@ func NewWebDriver(url string, command []string, options ...Option) *WebDriver {
 	apiWebDriver.Timeout = defaultOptions.Timeout
 	apiWebDriver.Debug = defaultOptions.Debug
 	apiWebDriver.HTTPClient = defaultOptions.HTTPClient
+	apiWebDriver.LogTag = defaultOptions.LogTag
 	return &WebDriver{apiWebDriver, defaultOptions}
 }
 

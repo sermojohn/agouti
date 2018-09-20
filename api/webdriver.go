@@ -12,13 +12,14 @@ type WebDriver struct {
 	Timeout    time.Duration
 	Debug      bool
 	HTTPClient *http.Client
+	LogTag     string
 	service    driverService
 	sessions   []*Session
 }
 
 type driverService interface {
 	URL() string
-	Start(debug bool) error
+	Start(debug bool, logTag string) error
 	Stop() error
 	WaitForBoot(timeout time.Duration) error
 }
@@ -55,7 +56,7 @@ func (w *WebDriver) Open(desiredCapabilites map[string]interface{}) (*Session, e
 }
 
 func (w *WebDriver) Start() error {
-	if err := w.service.Start(w.Debug); err != nil {
+	if err := w.service.Start(w.Debug, w.LogTag); err != nil {
 		return fmt.Errorf("failed to start service: %s", err)
 	}
 

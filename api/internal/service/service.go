@@ -30,7 +30,7 @@ func (s *Service) URL() string {
 	return s.url
 }
 
-func (s *Service) Start(debug bool) error {
+func (s *Service) Start(debug bool, logTag string) error {
 	if s.command != nil {
 		return errors.New("already running")
 	}
@@ -50,9 +50,17 @@ func (s *Service) Start(debug bool) error {
 		return fmt.Errorf("failed to parse command: %s", err)
 	}
 
-	if debug {
-		command.Stdout = os.Stdout
-		command.Stderr = os.Stderr
+	if len(logTag) > 0 {
+		formatCommand := exec.Command("awk", fmt.Sprintf("{print \"[%s] \"$0}", logTag))
+		formatCommand.Stdin, _ = command.StderrPipe()
+		formatCommand.Stdout = os.Stdout
+		if err := formatCommand.Start(); err != nil {
+			err = fmt.Errorf("failed to run command: %s", err)
+			if debug {
+				os.Stderr.WriteString("ERROR: " + err.Error() + "\n")
+			}
+			return err
+		}
 	}
 
 	if err := command.Start(); err != nil {
